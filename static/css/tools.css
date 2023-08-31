@@ -1,0 +1,90 @@
+
+:root {
+    --editable-option-input-width:300px;
+    --plaintext-font-size:18px;
+}
+
+.left-column {
+    float: left;
+    width: 50%;
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+.right-column {
+    float: right;
+    width: 50%;
+
+}
+
+button {
+    width: 80px;
+    height: 20px;
+    border: gainsboro;
+    border-radius: 10px;
+    background-color: gainsboro;
+}
+button:hover {
+    background-color: #92c0ff;
+}
+
+table {
+    border: 0;
+    margin: 0;
+    border-collapse: collapse;
+    border-spacing: 5px;
+}
+tbody{
+    white-space: nowrap;
+}
+td {
+    position: sticky;
+    padding: 5px 10px;
+}
+
+label {
+    padding-right: 5px;
+    display: inline-block;
+    width: 80px;
+    text-align: left;
+}
+
+#api-url {
+    width: calc(var(--editable-option-input-width) + 20px);
+    resize: none;
+}
+
+
+
+#known-api {
+    width: calc(var(--editable-option-input-width) + 20px);
+}
+
+
+.container {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.containerTitle{
+    color: #575757;
+}
+
+.path-variable-input{
+    width: 100px;
+}
+
+.path-variable-separator{
+    font-size: var(--plaintext-font-size);
+    padding-left: 2px;
+    padding-right: 2px;
+    display: inline;
+}
+
+.editableOptionInput{
+    position: absolute;
+    width: var(--editable-option-input-width);
+}
+.editableOptionSelect{
+    width: calc(var(--editable-option-input-width) + 20px);
+}

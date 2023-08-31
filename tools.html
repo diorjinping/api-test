@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>utility tools</title>
+
+    <link rel="stylesheet" href="./static/css/tools.css">
+    <link rel="stylesheet" href="./static/css/layui.css">
+    <script src="./static/js/layui.js"></script>
+    <script src="./static/js/jquery-3.7.0.js"></script>
+</head>
+<body>
+<div class="left-column">
+    <div class="container">
+        <table >
+            <tbody>
+            <tr>
+                <td><label for="api-url">url</label></td>
+                <td>
+                    <textarea id="api-url" rows="3">http://graph-service-tn-osm-na.stg.k8s.mypna.com:9080/api/v2/map-match/match?coordinate=23</textarea>
+                </td>
+                <td><button id="analyzeBtn">analyze</button></td>
+            </tr>
+            <tr>
+                <td> <label for="known-api">api</label></td>
+                <td>
+                    <select id="known-api">
+                        <option value="" >from url</option>
+                    </select>
+                </td>
+                <td><button id="choose-api">select</button></td>
+            </tr>
+            <tr>
+                <td colspan="2"><p id="warning" style="height: 20px"></p></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <div class="container" id="dnsInfo">
+        <h4 class="containerTitle">dns information</h4>
+    </div>
+    <div class="container" id="pathVariables">
+        <h4 class="containerTitle">path variables</h4>
+    </div>
+    <div class="container" id="queryParams">
+        <h4 class="containerTitle">query params</h4>
+    </div>
+    <div class="container">
+        <h4 class="containerTitle">response scheme</h4>
+    </div>
+</div>
+<div class="right-column">
+
+</div>
+</body>
+<script src="./static/js/tools.js"></script>
+
+</html>
