@@ -4,6 +4,8 @@ const dnsInfoContainer=document.getElementById("dnsInfo")
 const pathVariableContainer=document.getElementById('pathVariables')
 const queryParamContainer=document.getElementById('queryParams')
 const apiSelector=document.getElementById('known-api')
+const copyResponse=document.getElementById('copyResponse')
+const http=new XMLHttpRequest()
 const knownHosts=[
     "localhost",
     "ec2d-map-graph-02.mypna.com",
@@ -44,9 +46,23 @@ const knownApis={
     },
     openlr_decode:{
         text:"graph openlr decode",
-        value:""
+        value:"http://graph-service-here-sea.stg.k8s.mypna.com:9080/api/v2/decodeOpenLr?" +
+            "alphabetCode=C8TStR4jGQ4vCAG3%2Fx4OGA%3D%3D&endpointShow=BOTH"
+    },
+    way_intersect:{
+        text:"graph way intersecting",
+        value:"http://graph-service-tn-osm-na.stg.k8s.mypna.com:9080" +
+            "/api/v1/graph-data/ways-intersecting?&bounds=37.383253,-121.986694:37.378888,-121.981201&" +
+            "attributes=geometry,core,traffic"
     }
 }
+
+function sendGetRequest(url, succeedAction){
+    http.open('GET', url)
+    http.send()
+    http.onreadystatechange=succeedAction
+}
+
 
 function initComponents(){
     //make url display full content
@@ -68,6 +84,21 @@ function initComponents(){
         apiInput.style.height=apiInput.scrollHeight+'px'
         analyzeAPI(apiInput.textContent)
     })
+
+    //
+    document.getElementById('request').addEventListener('click',function (e){
+        e.target.setAttribute('disabled','disabled')
+        sendGetRequest(apiInput.textContent,(eve)=>{
+            e.target.removeAttribute('disabled')
+            copyResponse.removeAttribute('disabled')
+            copyResponse.data=http.responseText
+        })
+    })
+    copyResponse.addEventListener('click',function (e){
+        let res= navigator.clipboard.writeText(e.target.data)
+        console.log(res)
+        layerWarning(warningMessage.COPIED_RESPONSE)
+    })
 }
 initComponents()
 
@@ -77,7 +108,8 @@ let createdElems=[]
 const warningMessage={
     NOT_HTTP: "the api is not a http(s) request, please declare the protocol.",
     ONLY_HOST: "there is only host domain name, please declare uri.",
-    ALREADY_ANALYZED: "the api is already analyzed."
+    ALREADY_ANALYZED: "the api is already analyzed.",
+    COPIED_RESPONSE: "copied the response text"
 }
 
 
@@ -100,8 +132,20 @@ function createLabeledInputWithCheck(labelName, inputValue){
     label.textContent=labelName
     let inputElem=document.createElement('input')
     inputElem.value=inputValue
-    let checkbox=document.createElement('checkbox')
+    inputElem.setAttribute('class','queryParamInput')
+    let checkbox=document.createElement('input')
+    checkbox.setAttribute('type','checkbox')
+    checkbox.setAttribute('name', labelName)
+    checkbox.setAttribute('class','checkbox')
     checkbox.setAttribute('checked','checked')
+    checkbox.addEventListener('click',function (e){
+        if(this.checked===false){
+            inputElem.setAttribute('disabled','disabled')
+        }else {
+            inputElem.removeAttribute('disabled')
+        }
+        apiInput.textContent=generateUrl()
+    })
     return {
         label: label,
         input: inputElem,
@@ -190,12 +234,13 @@ function appendSepElements(container, needSeparator, ...elements){
     }
 }
 
-function appendLabeledInputPairs(container, elems){
+function appendInlineElemsSeg(container, ...elems){
     for (let pair of elems) {
-        container.appendChild(pair.label)
-        createdElems.push(pair.label)
-        container.appendChild(pair.input)
-        createdElems.push(pair.input)
+        for (let eachFeld in pair){
+            let field=pair[eachFeld]
+            container.appendChild(field)
+            createdElems.push(field)
+        }
         let seg=document.createElement('p')
         container.appendChild(seg)
         createdElems.push(seg)
@@ -210,10 +255,18 @@ function clearCreatedElems(){
 }
 
 function generateUrl(){
+    let queryParamStatus=new Map()
+    createdElems.filter((elem)=>{
+        return elem.tagName==='INPUT' && elem.getAttribute('type')==='checkbox'
+    }).forEach((e)=>{
+        queryParamStatus.set(e.getAttribute('name'),e)
+    })
     let pathVarsJoined=currentAnalyzedUrl.pathVariables.map((p)=>p.value).join('/')
     let queryParams=[]
     for (let [key,value] of currentAnalyzedUrl.queryParameters.entries()) {
-        queryParams.push(key+'='+value.value)
+        if(queryParamStatus.get(key).checked){
+            queryParams.push(key+'='+value.value)
+        }
     }
     let port=currentAnalyzedUrl.port.value.trim()===''?'':':'+currentAnalyzedUrl.port.value
     let queryParamsJoined=queryParams.join('&')
@@ -271,7 +324,7 @@ function analyzeAPI(url){
                 currentAnalyzedUrl.queryParameters=queryParams
                 for (let [key,value] of queryParams.entries()) {
                     let created=createLabeledInputWithCheck(key,value)
-                    appendLabeledInputPairs(queryParamContainer,[created])
+                    appendInlineElemsSeg(queryParamContainer,created)
                     currentAnalyzedUrl.queryParameters.set(key, created.input)
                 }
             }

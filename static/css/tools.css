@@ -18,13 +18,14 @@
 }
 
 button {
-    width: 80px;
+    min-width: 100px;
     height: 20px;
     border: gainsboro;
     border-radius: 10px;
     background-color: gainsboro;
+    margin-left: 10px;
 }
-button:hover {
+button:hover:enabled {
     background-color: #92c0ff;
 }
 
@@ -45,7 +46,7 @@ td {
 label {
     padding-right: 5px;
     display: inline-block;
-    width: 80px;
+    width: 100px;
     text-align: left;
 }
 
@@ -60,6 +61,10 @@ label {
     width: calc(var(--editable-option-input-width) + 20px);
 }
 
+.checkbox {
+    margin:0 0 0 20px;
+    zoom: 120%;
+}
 
 .container {
     padding-top: 5px;
@@ -87,4 +92,8 @@ label {
 }
 .editableOptionSelect{
     width: calc(var(--editable-option-input-width) + 20px);
+}
+
+.queryParamInput{
+    width: var(--editable-option-input-width);
 }
